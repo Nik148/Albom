@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{%block content%}
+<div class="container mt-5">
+    {% for person in people %}
+    <div class="follow-list">
+        <img src="{{url_for('static', filename='images/'+person.get_avatar())}}" class="rounded-circle me-2"
+        alt="" ounded-circle me-2" width="68" height="68">
+        <h5><a href="{{url_for('main.profile', username=person.username)}}">{{person.username}}</a></h5>
+    </div>
+    {% endfor %}
+</div>
+{%endblock%}

@@ -1,0 +1,138 @@
+header{
+    background-color: #212529;
+    box-sizing: border-box;
+    /* padding: 20px 0 0 0; */
+}
+/* .navbar-brand{
+    padding: 20px 0;
+} */
+.bi-book{
+    margin-right: 3px;
+    margin-bottom: 2px;
+    align-items: center;
+}
+.offcan{
+    background-color: #212529;
+    width: 300px;
+}
+.head{
+    padding-top: 8px;
+    padding-bottom: 6px;
+    display: flex;
+    /* Максимальное расстояние между соседними блоками */
+    justify-content: space-between;
+}
+.head-target{
+    border-color: rgba(255,255,255,.1);
+    border: 1px solid #212529;
+    background-color: #212529;
+    padding: .25rem .75rem
+}
+.bi-text-indent-right{
+    color: white;
+}
+.zag{
+    margin-left: auto;
+    margin-right: auto;
+}
+.section-zag{
+    padding: 100px 50px;
+}
+p{
+    box-sizing: border-box;
+}
+.help-zag{
+    color: #51575c;
+}
+.btn-1{
+    background-color: #055cb3;
+}
+.btn-2{
+    background-color: #51575c;
+}
+.btn-zag{
+    padding-top: 8px;
+}
+.btn-gr{
+    position: absolute;
+    bottom: 10px;
+}
+.card-position{
+    display: flex;
+    
+}
+.picture{
+    margin-bottom: 100px;
+    text-align: center;
+    vertical-align: middle;
+}
+.card-btn-text{
+    font-size: 14px;
+    /* position: absolute;
+    bottom: 3px; */
+}
+
+/* .text-bottom{
+    padding-bottom: 20px;
+} */
+.button-stick-left{
+    position: absolute;
+    bottom: 8px;
+}
+.button-stick-right{
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+}
+.time{
+    padding-top: 8px;
+    padding-bottom: 35px;
+}
+.section-card{
+    padding-bottom: 100px;
+}
+.prof{
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+footer{
+    background-color: #f8fcff;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 40px;
+    padding-bottom: 30px ;
+}
+.footer-text{
+    text-decoration: underline;
+}
+.icon-facebook{
+    color: white;
+    border-radius: 100%;
+    transition: all 0.2s;
+}
+.head-search{
+    display: flex;
+    /* justify-content: space-between; */
+}
+.search-form{
+    margin-right: 12px;
+}
+.icon-facebook:hover{
+    color: #212529;
+    background-color: white;
+    border: 0;
+}
+.contact-a{
+    padding-right: 30px;
+    padding-top: 8px;
+}
+.contact-icon{
+    display: flex;
+}
+.follow-list{
+    padding-bottom: 30px;
+    display: flex;
+    align-items: center;
+}

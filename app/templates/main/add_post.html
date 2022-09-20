@@ -1,0 +1,25 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Add post</h1>
+        <form action="" method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.text.label }}<br>
+                {{ form.text(size=140) }}<br>
+                {% for error in form.text.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{form.picture.label}}<br>
+                {{form.picture}}<br>
+                {% for error in form.picture.errors %}
+                <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
+{% endblock %}

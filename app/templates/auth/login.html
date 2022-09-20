@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href={{ url_for("static", filename="css/bootstrap.min.css") }}>
+    <link rel="stylesheet" href={{ url_for("static", filename="css/albom.css") }}>
+    <title>Albom</title>
+</head>
+<body>
+    <div class="container mt-5">
+
+
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control") }}
+            </div>
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control") }}
+            </div>
+            <div class="mb-3 form-check">
+                {{ form.remember_me.label(class="form-label") }}
+                {{ form.remember_me(class="form-check-input") }}
+            </div>
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+        <div>
+            {% for msg in get_flashed_messages() %}
+            {{msg}}
+            {% endfor %}
+        </div>
+        <p>New User? <a href="{{ url_for('auth.register') }}">Click to Register!</a></p>
+        <p>Forgot Your Password?<a href="{{ url_for('auth.reset_password') }}">Click to Reset It</a></p>
+    </div>
+<script src={{ url_for("static", filename="js/bootstrap.min.js") }}></script>
+</body>
