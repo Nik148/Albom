@@ -7,8 +7,9 @@ from app.models import User
 from werkzeug.urls import url_parse
 from app import db
 from flask_babel import _
+from flask_principal import identity_changed, Identity, AnonymousIdentity
 
-@bp.route("/login", methods=('GET', 'POST'))
+@bp.route("/login/", methods=('GET', 'POST'))
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -19,13 +20,15 @@ def login():
             flash("Invalid username or password")
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
+        # 
+        identity_changed.send(current_app._get_current_object(), identity=Identity(user.id))
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
+            next_page = url_for('main.explore')
         return redirect(next_page)
     return render_template("auth/login.html", form=form)
 
-@bp.route("/register", methods=('GET', 'POST'))
+@bp.route("/register/", methods=('GET', 'POST'))
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -51,6 +54,7 @@ def save_new_user(token):
 @bp.route("/logout")
 def logout():
     logout_user()
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
     return redirect(url_for("auth.login"))
 
 @bp.route("/reset_password", methods=('GET', 'POST'))

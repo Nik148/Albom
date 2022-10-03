@@ -1,6 +1,7 @@
+from email.policy import default
 from app import db, login
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from datetime import datetime
 from flask import current_app
 import os
@@ -10,8 +11,11 @@ from app.search import add_to_index, remove_from_index, query_index, query_prefi
 
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
-)
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id')))
+
+users_roles = db.Table('users_roles',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('role_id', db.Integer, db.ForeignKey('role.id')))
 
 class SearchableMixin(object):
     # Для Elasticsearch
@@ -72,7 +76,7 @@ class User(UserMixin, db.Model, SearchableMixin):
     username = db.Column(db.String(50), index=True, unique=True)
     email = db.Column(db.String(50), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    about_me = db.Column(db.String(140))
+    about_me = db.Column(db.String(140), default='')
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship(
@@ -80,6 +84,7 @@ class User(UserMixin, db.Model, SearchableMixin):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    role = db.relationship('Role', secondary=users_roles, backref=db.backref('users', lazy='dynamic'))
 
 #    'User' — это правая сторона связи (левая сторона — это родительский класс). Поскольку это самореферентное отношение, я должен использовать тот же класс с обеих сторон.
 #    secondary кофигурирует таблицу ассоциаций, которая используется для этой связи, которую я определил прямо над этим классом.
@@ -158,6 +163,15 @@ class User(UserMixin, db.Model, SearchableMixin):
 def load_user(id):
     return User.query.get(int(id))
 
+class Role(db.Model):
+ 
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), unique=True)
+    description = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Model Role `{}`>".format(self.name)
+
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
@@ -180,3 +194,7 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+class AnonymousUser(AnonymousUserMixin):
+    def is_following(self, user):
+        return False

@@ -16,7 +16,7 @@ class EditProfileForm(FlaskForm):
             # Безопасно извлекаем имя файла
             filename = secure_filename(avatar.data.filename)
             file_ext = os.path.splitext(filename)[1]
-            # file_ext = os.path.splitext(filename)[1] #filename.rsplit('.', 1)[1].lower()
+            #filename.rsplit('.', 1)[1].lower()
             # Если неразрешенный формат файла и файла существует, то вызывается исключение
             if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] and filename:
                 raise ValidationError('Please use a different format of photo.')
@@ -30,8 +30,8 @@ class AddPostForm(FlaskForm):
             # Безопасно извлекаем имя файла
             filename = secure_filename(picture.data.filename)
             file_ext = os.path.splitext(filename)[1]
-            # file_ext = os.path.splitext(filename)[1] #filename.rsplit('.', 1)[1].lower()
-            # Если неразрешенный формат файла и файла существует, то вызывается исключение
+            #filename.rsplit('.', 1)[1].lower()
+            # Если неразрешенный формат файла и файл существует, то вызывается исключение
             if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] and filename:
                 raise ValidationError('Please use a different format of photo.')    
 

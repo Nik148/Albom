@@ -24,6 +24,7 @@ class Config(object):
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL') 
     CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
     CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+    DEBUG_TB_PROFILER_ENABLED = True
     # MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
 
 class ProductionConfig(Config):

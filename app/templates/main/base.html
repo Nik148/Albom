@@ -83,16 +83,28 @@
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
                 </div>
                 <div class="offcanvas-body">
+                    {% if current_user.is_authenticated %}
                     <nav class="nav flex-column text-white">
                         <a class="nav-link text-white" href="{{url_for('main.explore')}}">Explore</a>
-                        <a class="nav-link text-white" aria-current="page" href="{{url_for('main.profile', username=current_user.username)}}">Home</a>
+                        <a class="nav-link text-white" href="{{url_for('main.profile', username=current_user.username)}}">Home</a>
                         <a class="nav-link text-white" href="{{url_for('main.index')}}">Main</a>
                         <a class="nav-link text-white" href={{url_for('auth.logout')}}>Exit</a>
                     </nav>
                     <div class="prof">
-                        <img src="{{url_for('static', filename='images/'+current_user.get_avatar())}}" class="rounded-circle me-2" alt="" ounded-circle me-2" width="48" height="48">
+                        <img src="{{url_for('static', filename='images/'+current_user.get_avatar())}}" class="rounded-circle me-2" alt="" width="48" height="48">
                         <h6 class="text-white">{{current_user.username}}</h6>
                     </div>
+                    {% else %}
+                    <nav class="nav flex-column text-white">
+                        <a class="nav-link text-white" href="{{url_for('main.explore')}}">Explore</a>
+                        <a class="nav-link text-white" href="{{url_for('auth.register')}}">Registration</a>
+                        <a class="nav-link text-white" href="{{url_for('auth.login')}}">Login</a>
+                    </nav>
+                    <div class="prof">
+                        <img src="{{url_for('static', filename='images/avatars/not-found.jpg')}}" class="rounded-circle me-2" alt="" width="48" height="48">
+                        <h6 class="text-white">Anonymous</h6>
+                    </div>
+                    {% endif %}
                 </div>
               </div>
         </div>     
