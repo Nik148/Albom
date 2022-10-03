@@ -10,13 +10,13 @@ import os
 
 @bp.before_request
 def before_request():
+    g.locale = get_locale()
+    if current_app.elasticsearch:
+        # Чтобы избежать csrf проверки, вводим в конструтор meta={'csrf': False}
+        g.search_form = SearchForm(meta={'csrf': False})
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
-        g.locale = get_locale()
-        if current_app.elasticsearch:
-            # Чтобы избежать csrf проверки, вводим в конструтор meta={'csrf': False}
-            g.search_form = SearchForm(meta={'csrf': False})
 
 
 @bp.route("/")
@@ -30,16 +30,15 @@ def index():
     return render_template("main/main.html", posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/explore')
-@login_required
 def explore():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
+    print(current_user)
     return render_template('main/main.html',posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/profile/<username>")
-@login_required
 def profile(username):
     user = User.query.filter_by(username=username).first()
     page = request.args.get('page', 1, type=int)
@@ -99,28 +98,27 @@ def unfollow(username):
     return redirect(url_for("main.profile", username=username))
 
 @bp.route("/profile/<username>/followers")
-@login_required
 def followers(username):
     followers_list = User.query.filter_by(username=username).first().followers
     return render_template("main/people_list.html", people=followers_list)
 
 @bp.route("/profile/<username>/followed")
-@login_required
 def followed(username):
     followed_list = User.query.filter_by(username=username).first().followed
     return render_template("main/people_list.html", people=followed_list)
 
 @bp.route('/search')
-@login_required
 def search():
     if not g.search_form.validate():
         return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
+
     if g.search_form.select.data == "People":
         people, total = User.search_prefix(g.search_form.q.data, page, current_app.config['POSTS_PER_PAGE'])
         next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) if total > page * current_app.config['POSTS_PER_PAGE'] else None
         prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) if page > 1 else None
         return render_template('main/people_list.html', people=people, next_url=next_url, prev_url=prev_url)
+
     elif g.search_form.select.data == "Text":
         posts, total = Post.search(g.search_form.q.data, page, current_app.config['POSTS_PER_PAGE'])
         next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) if total > page * current_app.config['POSTS_PER_PAGE'] else None
@@ -128,6 +126,7 @@ def search():
         return render_template('main/main.html', posts=posts, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/profile/<username>/delete/<post_id>')
+@login_required
 def delete_post(username, post_id):
     if current_user.username != username:
         return redirect('main.index')

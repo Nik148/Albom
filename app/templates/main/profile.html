@@ -11,12 +11,10 @@
             <div class="col-md-4">
                 <div class="card-body">
                 <h5 class="card-title">{{user.username}}</h5>
-                {% if user.about_me %}
+                <!-- {% if user.about_me %} -->
                 <p class="card-text">{{user.about_me}}</p>
-                {% endif %}
-                {% if user.last_seen %}
+                <!-- {% endif %} -->
                 <p class="card-text">Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
-                {% endif %}
                 <p class="card-text">
                     {{user.followers.count()}} <a href="{{url_for('main.followers', username=user.username)}}">followers</a>, 
                     {{user.followed.count()}} <a href="{{url_for('main.followed', username=user.username)}}">followed</a>
