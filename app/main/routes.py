@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, flash, get_flashed_messages, request, abort, current_app, g
 from app.main import bp
-from app import db
+from app import db, cache
 from flask_login import current_user, login_required
 from app.models import User, Post
 from datetime import datetime
@@ -15,8 +15,15 @@ def before_request():
         # Чтобы избежать csrf проверки, вводим в конструтор meta={'csrf': False}
         g.search_form = SearchForm(meta={'csrf': False})
     if current_user.is_authenticated:
+        # print(current_user.last_seen)
+        # user = cache.get(current_user.__repr__())
+        # user.last_seen = current_user.last_seen = datetime.utcnow()
+        # cache.set(user.__repr__(), user, timeout=600)
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+        # u = User.query.get(2)
+        # print(u.last_seen)
+
 
 
 @bp.route("/")
@@ -38,7 +45,8 @@ def explore():
     print(current_user)
     return render_template('main/main.html',posts=posts.items, next_url=next_url, prev_url=prev_url)
 
-@bp.route("/profile/<username>")
+@bp.route("/profile/<username>/")
+# @cache.cached(300) # Сохраняет в кэш с ключом view//profile/<username>/
 def profile(username):
     user = User.query.filter_by(username=username).first()
     page = request.args.get('page', 1, type=int)
@@ -74,6 +82,8 @@ def add_post():
         db.session.add(post)
         db.session.commit()
         form.picture.data.save(os.path.join(current_app.config['UPLOAD_PATH'], post.get_picture()))
+        # Удаление из кэша функции представления страницы пользователя
+        cache.delete(f'view//profile/{current_user.username}/')
         return redirect(url_for('main.profile', username=current_user.username))
     return render_template('main/add_post.html', form=form)
 
@@ -97,12 +107,14 @@ def unfollow(username):
     db.session.commit()
     return redirect(url_for("main.profile", username=username))
 
-@bp.route("/profile/<username>/followers")
+@bp.route("/profile/<username>/followers/")
+# @cache.cached(120)
 def followers(username):
     followers_list = User.query.filter_by(username=username).first().followers
     return render_template("main/people_list.html", people=followers_list)
 
-@bp.route("/profile/<username>/followed")
+@bp.route("/profile/<username>/followed/")
+# @cache.cached(120)
 def followed(username):
     followed_list = User.query.filter_by(username=username).first().followed
     return render_template("main/people_list.html", people=followed_list)
@@ -131,4 +143,5 @@ def delete_post(username, post_id):
     if current_user.username != username:
         return redirect('main.index')
     Post.delete_post(post_id)
+    # cache.delete(f'view//profile/{current_user.username}/')
     return redirect(url_for('main.profile', username=username))

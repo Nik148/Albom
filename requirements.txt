@@ -16,11 +16,15 @@ elastic-transport==8.1.2
 elasticsearch==8.3.3
 email-validator==1.2.1
 Flask==2.1.2
+Flask-Admin==1.6.0
 Flask-Babel==2.0.0
+Flask-Cache==0.13.1
+Flask-DebugToolbar==0.13.1
 Flask-Login==0.6.0
 Flask-Mail==0.9.1
 Flask-Migrate==3.1.0
 Flask-Moment==1.0.4
+Flask-Principal==0.4.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.0.1
 greenlet==1.1.2
