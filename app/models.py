@@ -1,13 +1,15 @@
 from email.policy import default
-from app import db, login
+from app import db, login, cache
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
+from sqlalchemy.orm import joinedload
 from datetime import datetime
-from flask import current_app
+from flask import current_app, g
 import os
 from time import time
 import jwt
 from app.search import add_to_index, remove_from_index, query_index, query_prefix_index
+import pickle
 
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -80,21 +82,18 @@ class User(UserMixin, db.Model, SearchableMixin):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship(
-        'User', secondary=followers,
+        'User',
+        secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
-    role = db.relationship('Role', secondary=users_roles, backref=db.backref('users', lazy='dynamic'))
+    role = db.relationship('Role', secondary=users_roles, backref=db.backref('users', lazy='dynamic'), lazy='dynamic')
 
-#    'User' — это правая сторона связи (левая сторона — это родительский класс). Поскольку это самореферентное отношение, я должен использовать тот же класс с обеих сторон.
-#    secondary кофигурирует таблицу ассоциаций, которая используется для этой связи, которую я определил прямо над этим классом.
-#    primaryjoin указывает условие, которое связывает объект левой стороны (follower user) с таблицей ассоциаций. Условием объединения для левой стороны связи является идентификатор пользователя, соответствующий полю follower_id таблицы ассоциаций. Выражение followers.c.follower_id ссылается на столбец follower_id таблицы ассоциаций.
-#    secondaryjoin определяет условие, которое связывает объект правой стороны (followed user) с таблицей ассоциаций. Это условие похоже на primaryjoin, с той лишь разницей, что теперь я использую followed_id, который является другим внешним ключом в таблице ассоциаций.
-#    backref определяет, как эта связь будет доступна из правой части объекта. С левой стороны отношения пользователи называются followed, поэтому с правой стороны я буду использовать имя followers, чтобы представить всех пользователей левой стороны, которые связаны с целевым пользователем в правой части. Дополнительный lazy аргумент указывает режим выполнения этого запроса. Режим dynamic настройки запроса не позволяет запускаться до тех пор, пока не будет выполнен конкретный запрос, что также связано с тем, как установлено отношения «один ко многим».
-#    -lazy похож на параметр с тем же именем в backref, но этот относится к левой, а не к правой стороне.
-
+    # Декоратор @cache.memoize использует функцию repr() для просмотра переданных аргументов,
+    # так что, если у объекта есть метод __repr__, который возвращает уникально идентифицирующую строку для этого объекта, 
+    # то она будет использоваться как часть ключа кэша.
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<User {}>'.format(self.id)
 
     def set_password(self, password) -> None:
         self.password_hash = generate_password_hash(password)
@@ -111,7 +110,7 @@ class User(UserMixin, db.Model, SearchableMixin):
             return 'avatars/'+str(self.id)
         else:
             return 'avatars/not-found.jpg'
-
+    
     def follow(self, user):
         if not self.is_following(user):
             self.followed.append(user)
@@ -120,6 +119,7 @@ class User(UserMixin, db.Model, SearchableMixin):
         if self.is_following(user):
             self.followed.remove(user)
 
+    @cache.memoize(300) # Не может серилизовать классы запросов sqlalchemy
     def is_following(self, user):
         return self.followed.filter(
             followers.c.followed_id == user.id).count() > 0
@@ -156,12 +156,24 @@ class User(UserMixin, db.Model, SearchableMixin):
                             algorithms=['HS256'])['reset_password']
         except:
             return
-        return User.query.get(id)        
+        return User.query.get(id)
 
 
 @login.user_loader
 def load_user(id):
-    return User.query.get(int(id))
+    # Реализация с кэшами, имеет проблемы при вызовах внешних ключей с ленивой загрузкой
+    # user = f'<User {id}>'
+    # user_obj = pickle.loads(cache.get(user)) if cache.get(user) else None
+    # if user_obj is None:
+    #     print('Caching...')
+    #     query = User.query.options(joinedload('followed'), joinedload('role')).get(1)
+    #     user_obj = pickle.dumps(User.query.get(int(id)))
+    #     cache.set(user, user_obj, timeout=300)
+    #     return query
+    # return user_obj
+
+    # Стандарт
+  return User.query.get(int(id))
 
 class Role(db.Model):
  
@@ -192,8 +204,9 @@ class Post(SearchableMixin, db.Model):
             db.session.delete(post)
             db.session.commit()
 
+
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return '<Post {}>'.format(self.id)
 
 class AnonymousUser(AnonymousUserMixin):
     def is_following(self, user):

@@ -1,11 +1,11 @@
-from flask import render_template, url_for, redirect, flash, get_flashed_messages, request, current_app
+from flask import render_template, url_for, redirect, flash, get_flashed_messages, request, current_app, session
 from flask_login import current_user, login_user, logout_user
 from app.auth import bp
 from app.auth.forms import LoginForm, RegisterForm, ResetPasswordForm, NewPasswordForm
 from app.auth.email import send_confirmation_registration, send_password_reset
 from app.models import User
 from werkzeug.urls import url_parse
-from app import db
+from app import db, cache
 from flask_babel import _
 from flask_principal import identity_changed, Identity, AnonymousIdentity
 
@@ -53,8 +53,13 @@ def save_new_user(token):
 
 @bp.route("/logout")
 def logout():
+    # Если @login.user_loader с кэшированием
+    # user = f'<User {current_user.id}>'
+    # cache.delete(user)
     logout_user()
     identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
+    # for key in ('identity.name', 'identity.auth_type'):
+    #     session.pop(key, None)
     return redirect(url_for("auth.login"))
 
 @bp.route("/reset_password", methods=('GET', 'POST'))

@@ -7,6 +7,7 @@ from flask_mail import Mail
 from flask_moment import Moment
 from flask_babel import Babel
 from flask_principal import Principal, Permission, RoleNeed, UserNeed,identity_loaded
+from flask_caching import Cache
 from flask_debugtoolbar import DebugToolbarExtension
 from elasticsearch import Elasticsearch
 from celery import Celery
@@ -25,6 +26,7 @@ principals = Principal()
 admin_permission = Permission(RoleNeed('admin'))
 moderator_permission = Permission(RoleNeed('moderator'))
 user_permission = Permission(RoleNeed('user'))
+cache = Cache()
 toolbar = DebugToolbarExtension()
 
 def create_app(config_class=Config):
@@ -41,6 +43,7 @@ def create_app(config_class=Config):
     celery.conf.update(app.config)
     toolbar.init_app(app)
     principals.init_app(app)
+    cache.init_app(app)
 
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
