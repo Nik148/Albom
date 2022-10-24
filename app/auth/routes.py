@@ -1,4 +1,4 @@
-from flask import render_template, url_for, redirect, flash, get_flashed_messages, request, current_app, session
+from flask import render_template, url_for, redirect, flash, get_flashed_messages, request, current_app, jsonify
 from flask_login import current_user, login_user, logout_user
 from app.auth import bp
 from app.auth.forms import LoginForm, RegisterForm, ResetPasswordForm, NewPasswordForm
@@ -89,3 +89,4 @@ def new_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('auth.login'))
     return render_template('auth/new_password.html', form=form)
+

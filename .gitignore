@@ -1,0 +1,11 @@
+__pycache__
+venv
+# Translations
+*.mo
+
+avatars
+!app/static/images/avatars/not-found.jpg
+pictures
+.env
+albom.log
+help.txt

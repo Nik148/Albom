@@ -38,11 +38,11 @@ def index():
 
 @bp.route('/explore')
 def explore():
+    print(url_for('rest_api.User_user_api', user_id=2))
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
-    print(current_user)
     return render_template('main/main.html',posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/profile/<username>/")
