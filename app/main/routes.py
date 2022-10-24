@@ -15,8 +15,14 @@ def before_request():
         # Чтобы избежать csrf проверки, вводим в конструтор meta={'csrf': False}
         g.search_form = SearchForm(meta={'csrf': False})
     if current_user.is_authenticated:
+        # print(current_user.last_seen)
+        # user = cache.get(current_user.__repr__())
+        # user.last_seen = current_user.last_seen = datetime.utcnow()
+        # cache.set(user.__repr__(), user, timeout=600)
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+        # u = User.query.get(2)
+        # print(u.last_seen)
 
 
 
@@ -32,6 +38,7 @@ def index():
 
 @bp.route('/explore')
 def explore():
+    print(url_for('rest_api.User_user_api', user_id=2))
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
@@ -101,12 +108,14 @@ def unfollow(username):
     db.session.commit()
     return redirect(url_for("main.profile", username=username))
 
-@bp.route("/profile/<username>/followers")
+@bp.route("/profile/<username>/followers/")
+# @cache.cached(120)
 def followers(username):
     followers_list = User.query.filter_by(username=username).first().followers
     return render_template("main/people_list.html", people=followers_list)
 
-@bp.route("/profile/<username>/followed")
+@bp.route("/profile/<username>/followed/")
+# @cache.cached(120)
 def followed(username):
     followed_list = User.query.filter_by(username=username).first().followed
     return render_template("main/people_list.html", people=followed_list)

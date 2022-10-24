@@ -8,6 +8,8 @@ from flask_moment import Moment
 from flask_babel import Babel
 from flask_principal import Principal, Permission, RoleNeed, UserNeed,identity_loaded
 from flask_caching import Cache
+from flask_jwt_extended import JWTManager
+# from flask_restx import Api
 from flask_debugtoolbar import DebugToolbarExtension
 from elasticsearch import Elasticsearch
 from celery import Celery
@@ -27,6 +29,8 @@ admin_permission = Permission(RoleNeed('admin'))
 moderator_permission = Permission(RoleNeed('moderator'))
 user_permission = Permission(RoleNeed('user'))
 cache = Cache()
+jwt = JWTManager()
+# rest_api = Api()
 toolbar = DebugToolbarExtension()
 
 def create_app(config_class=Config):
@@ -44,6 +48,8 @@ def create_app(config_class=Config):
     toolbar.init_app(app)
     principals.init_app(app)
     cache.init_app(app)
+    jwt.init_app(app)
+    # rest_api.init_app(app)
 
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
@@ -81,6 +87,9 @@ def create_app(config_class=Config):
 
     from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp)
+
+    from app.api import bp as api_bp
+    app.register_blueprint(api_bp)
 
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None
 
