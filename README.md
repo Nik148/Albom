@@ -21,7 +21,7 @@ redis-server --port 6380
 celery -A celery_worker.celery worker -l info
 
 ## Демонстрация
-![Image alt](https://github.com/Nik148/Albom/raw/master/app_photo/1.png)
-![Image alt](https://github.com/Nik148/Albom/raw/master/app_photo/2.png)
-![Image alt](https://github.com/Nik148/Albom/raw/master/app_photo/3.png)
-![Image alt](https://github.com/Nik148/Albom/raw/master/app_photo/4.png)
+![Image alt](https://github.com/Nik148/Albom/raw/master/doc/1.png)
+![Image alt](https://github.com/Nik148/Albom/raw/master/doc/2.png)
+![Image alt](https://github.com/Nik148/Albom/raw/master/doc/3.png)
+![Image alt](https://github.com/Nik148/Albom/raw/master/doc/4.png)
