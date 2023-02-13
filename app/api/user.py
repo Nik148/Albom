@@ -1,23 +1,17 @@
+from re import I
 from flask_restx import Resource, fields, marshal_with
 from flask_jwt_extended import jwt_required
+from sqlalchemy.orm import joinedload
 from flask import abort, url_for
 from app.api import rest_api
 from app.models import User
 
 ns = rest_api.namespace('User', description='Operation with user', path='/api/user')
 
-# def get_user_links(user_id):
-#     return ns.model('User links',{
-# 'self': fields.String(attribute=lambda x: url_for('rest_api.User_user_api', user_id=user_id))
-# })
-
-# user_links = ns.model('User links',{
-# 'self': fields.String(attribute=lambda x: url_for('rest_api.User_user_api', user_id=x.id))
-# })
-
 class UserLinks(fields.Raw):
     def format(self, value):
         return {
+            # GET api/user/{id}
             'self': url_for('rest_api.User_user_api', user_id=value.id),
             }
 
@@ -38,7 +32,6 @@ class UserAPI(Resource):
     @marshal_with(user_fields)
     @jwt_required()
     def get(self, user_id):
-        # print(url_for('main.profile', username='Nik'))
         user = User.query.filter_by(id=user_id).first()
         if not user:
             abort(404)

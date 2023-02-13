@@ -5,22 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-4 col-sm-6">
                 {% for post in posts %}
-                    <div class="mt-3 mb-3 card">
-                        <img src="{{ url_for('static', filename='images/'+post.get_picture()) }}"  class="card-img-top" style="max-width: 450px;max-height: 450px;" alt="">
-                        <div class="card-body">
-                            <div class="card-text">{{post.body}}</div>
-                            <div class="card-text"><small class="text-muted">{{ moment(post.timestamp).fromNow() }}</small></div>
-                            <div class="card-text time">
-                                <img src="{{url_for('static', filename='images/'+post.author.get_avatar())}}" class="rounded-circle me-2"
-                                alt="" ounded-circle me-2" width="34" height="34">
-                                <a href="{{url_for('main.profile', username=post.author.username)}}">{{post.author.username}}</a>
-                            </div>
-                            <div class="btn-group button-stick-left">    
-                                <button type="button" class="btn btn-primary card-btn-text">Вид</button>
-                                <button type="button" class="btn btn-2 text-white card-btn-text">Лайк </button>
-                            </div>
-                        </div>
-                    </div>
+                    {% include 'main/_post.html' %}
                 {% endfor %}
                 {% if prev_url %}
                 <a href="{{ prev_url }}">Newer posts</a>

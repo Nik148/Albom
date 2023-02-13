@@ -1,0 +1,92 @@
+2022-08-01 16:12:32,624 INFO: Microblog startup [in /home/nikita/Progi/Veb/Flask/Albom/app/__init__.py:60]
+2022-08-01 16:12:41,157 ERROR: Exception on /profile/Nik [GET] [in /home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py:1455]
+Traceback (most recent call last):
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 2077, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1525, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1523, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1509, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask_login/utils.py", line 277, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/main/routes.py", line 36, in profile
+    raise 1
+TypeError: exceptions must derive from BaseException
+2022-08-02 17:13:25,306 INFO: Microblog startup [in /home/nikita/Progi/Veb/Flask/Albom/app/__init__.py:63]
+2022-11-03 19:35:19,060 INFO: Microblog startup [in /home/nikita/Progi/Veb/Flask/Albom/app/__init__.py:110]
+2022-11-15 11:13:46,282 INFO: Microblog startup [in /home/nikita/Progi/Veb/Flask/Albom/app/__init__.py:110]
+2022-11-21 11:08:40,915 INFO: Microblog startup [in /home/nikita/Progi/Veb/Flask/Albom/app/__init__.py:110]
+2022-11-21 11:08:57,521 ERROR: Exception on / [GET] [in /home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py:1449]
+Traceback (most recent call last):
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1519, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask_restx/api.py", line 672, in error_router
+    return original_handler(e)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1515, in full_dispatch_request
+    rv = self.preprocess_request()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1857, in preprocess_request
+    rv = self.ensure_sync(before_func)()
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/main/routes.py", line 23, in before_request
+    db.session.commit()
+  File "<string>", line 2, in commit
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 1435, in commit
+    self._transaction.commit(_to_root=self.future)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 839, in commit
+    self.session.dispatch.after_commit(self.session)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/sqlalchemy/event/attr.py", line 256, in __call__
+    fn(*args, **kw)
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/models.py", line 61, in after_commit
+    add_to_index(obj.__tablename__, obj)
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/search.py", line 11, in add_to_index
+    current_app.elasticsearch.index(index=index, id=model.id, body=payload)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/elasticsearch/_sync/client/utils.py", line 414, in wrapped
+    return api(*args, **kwargs)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/elasticsearch/_sync/client/__init__.py", line 2246, in index
+    return self.perform_request(  # type: ignore[return-value]
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/elasticsearch/_sync/client/_base.py", line 286, in perform_request
+    meta, resp_body = self.transport.perform_request(
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/elastic_transport/_transport.py", line 329, in perform_request
+    meta, raw_data = node.perform_request(
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/elastic_transport/_node/_http_urllib3.py", line 199, in perform_request
+    raise err from None
+elastic_transport.ConnectionError: Connection error caused by: ConnectionError(Connection error caused by: NewConnectionError(<urllib3.connection.HTTPConnection object at 0x7f00db4ae790>: Failed to establish a new connection: [Errno 111] Connection refused))
+2022-11-21 11:21:52,436 INFO: Microblog startup [in /home/nikita/Progi/Veb/Flask/Albom/app/__init__.py:110]
+2022-11-21 11:21:57,157 ERROR: Exception on /main [GET] [in /home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py:1449]
+Traceback (most recent call last):
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1519, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask_restx/api.py", line 672, in error_router
+    return original_handler(e)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1517, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/app.py", line 1503, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask_login/utils.py", line 277, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/main/routes.py", line 37, in index
+    return render_template("main/main.html", posts=posts.items, next_url=next_url, prev_url=prev_url)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/templating.py", line 154, in render_template
+    return _render(
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/templating.py", line 128, in _render
+    rv = template.render(context)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/jinja2/environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/jinja2/environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/templates/main/main.html", line 1, in top-level template code
+    {% extends "main/base.html" %}
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/templates/main/base.html", line 113, in top-level template code
+    {%block content%}{%endblock%}
+  File "/home/nikita/Progi/Veb/Flask/Albom/app/templates/main/main.html", line 8, in block 'content'
+    {% include '_post.html' %}
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/templating.py", line 59, in get_source
+    return self._get_source_fast(environment, template)
+  File "/home/nikita/Progi/Veb/Flask/Albom/venv/lib/python3.8/site-packages/flask/templating.py", line 95, in _get_source_fast
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: _post.html

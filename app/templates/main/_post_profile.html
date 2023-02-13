@@ -1,0 +1,16 @@
+<div class="mt-5 card">
+    <img src="{{ url_for('static', filename='images/'+post.get_picture()) }}"  class="card-img-top" style="max-width: 450px;max-height: 450px;" alt="">
+    <div class="card-body">
+        <div class="card-text">{{post.body}}</div>
+        <div class="card-text time"><small class="text-muted">{{ moment(post.timestamp).fromNow() }}</small></div>
+        <div class="btn-group button-stick-left">    
+            <button type="button" class="btn btn-primary card-btn-text">Вид</button>
+            <button type="button" class="btn btn-2 text-white card-btn-text">Лайк </button>
+        </div>
+        {% if user == current_user %}
+        <div class="btn-group button-stick-right">
+            <a href="{{url_for('main.delete_post', username=user.username, post_id=post.id)}}" class="btn btn-danger card-btn-text">Удалить</a>
+        </div>
+        {% endif %}
+    </div>
+</div>

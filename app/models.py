@@ -19,6 +19,12 @@ users_roles = db.Table('users_roles',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('role_id', db.Integer, db.ForeignKey('role.id')))
 
+likes = db.Table('likes',
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.UniqueConstraint('post_id', 'user_id')
+)
+
 class SearchableMixin(object):
     # Для Elasticsearch
     @classmethod
@@ -190,9 +196,15 @@ class Post(SearchableMixin, db.Model):
     body = db.Column(db.String(400))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    likes = db.relationship('User', secondary=likes, backref=db.backref('liked_posts', lazy='dynamic')  ,lazy='dynamic')
 
     def get_picture(self):
         return 'pictures/'+str(self.id)
+
+    def is_liked(self, user):
+        print(self.likes.filter(likes.c.user_id == user.id).count() > 0)
+        return (self.likes.filter(
+            likes.c.user_id == user.id).count() > 0)
 
     @staticmethod
     def delete_post(id):

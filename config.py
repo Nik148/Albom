@@ -30,7 +30,7 @@ class Config(object):
     DEBUG_TB_PROFILER_ENABLED = True
     CACHE_TYPE = 'RedisCache'
     CACHE_REDIS_HOST = '127.0.0.1'
-    CACHE_REDIS_PORT = 6380
+    CACHE_REDIS_PORT = 6379
     CACHE_DEFAULT_TIMEOUT = 600
 
     # MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')

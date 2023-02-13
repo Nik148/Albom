@@ -1,11 +1,12 @@
-from flask import render_template, redirect, url_for, flash, get_flashed_messages, request, abort, current_app, g
+from flask import render_template, redirect, url_for, flash, get_flashed_messages, request, abort, current_app, g, Response
 from app.main import bp
 from app import db, cache
 from flask_login import current_user, login_required
-from app.models import User, Post
+from app.models import User, Post, likes
 from datetime import datetime
 from app.main.forms import EditProfileForm, AddPostForm, SearchForm
 from flask_babel import get_locale, lazy_gettext as _l
+from sqlalchemy.exc import IntegrityError
 import os
 
 @bp.before_request
@@ -43,7 +44,6 @@ def explore():
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
-    print(current_user)
     return render_template('main/main.html',posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/profile/<username>/")
@@ -146,3 +146,26 @@ def delete_post(username, post_id):
     Post.delete_post(post_id)
     # cache.delete(f'view//profile/{current_user.username}/')
     return redirect(url_for('main.profile', username=username))
+
+@bp.route('/like_increment', methods=("POST",))
+@login_required
+def like_increment():
+    print(request.json)
+    query = likes.insert().values(user_id=int(request.json['user_id']), post_id=int(request.json['post_id']))
+    try:
+        db.session.execute(query)
+        db.session.commit()
+    except IntegrityError:
+        # Исключение срабытывающее на добавление строки, которая уже есть в бд
+        # И на добавление несуществующих ключей
+        return Response(status=400)
+    return Response(status=200)
+
+@bp.route('/like_decrement', methods=("POST",))
+@login_required
+def like_decrement():
+    like = db.session.query(likes).filter(
+        likes.c.user_id == int(request.json['user_id']),
+        likes.c.post_id == int(request.json['post_id'])).delete()
+    db.session.commit()
+    return Response(status=200)

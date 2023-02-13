@@ -1,0 +1,9 @@
+Celery:
+celery -A celery_worker.celery worker -l info
+
+Elasticsearch:
+sudo /etc/init.d/elasticsearch start
+sudo /etc/init.d/elasticsearch status
+
+
+u = User.query.options(joinedload('followed'), joinedload('role')).get(1)
