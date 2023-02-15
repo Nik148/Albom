@@ -28,9 +28,10 @@ class Config(object):
     CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
     CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
     DEBUG_TB_PROFILER_ENABLED = True
+    CACHE_REDIS_URL = os.environ.get('CACHE_REDIS_URL') or "redis://localhost:6379"
+    CACHE_REDIS_HOST = os.environ.get('CACHE_REDIS_HOST') or 'localhost'
+    CACHE_REDIS_PORT=6379
     CACHE_TYPE = 'RedisCache'
-    CACHE_REDIS_HOST = '127.0.0.1'
-    CACHE_REDIS_PORT = 6379
     CACHE_DEFAULT_TIMEOUT = 600
 
     # MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')

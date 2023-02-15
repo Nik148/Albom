@@ -1,0 +1,50 @@
+version: '3.3'
+
+services:
+  webapp:
+    build: .
+    command: bash -c ". venv/bin/activate
+             && flask db init
+             && flask db revision --rev-id  98e846c36f28
+             && flask db stamp head
+             && flask db migrate
+             && flask db upgrade
+             && python3 albom.py"
+    depends_on: 
+      - db
+      - elasticsearch
+    environment:
+      - DATABASE_URL=postgresql://postgres:123@db:5432
+      - FLASK_APP=albom.py
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+      - CACHE_REDIS_URL=redis://redis:6379
+      - CACHE_REDIS_HOST=redis
+    ports:
+      - 5000:5000
+
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+    ports:
+      - 5433:5432
+  
+  elasticsearch:
+    image: bitnami/elasticsearch:latest
+    
+  celery:
+    build: .
+    command: celery -A celery_worker.celery worker -l info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    depends_on:
+      - redis
+      - webapp
+  
+  redis:
+    image: redis:latest

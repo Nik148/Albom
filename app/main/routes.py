@@ -47,7 +47,7 @@ def explore():
     return render_template('main/main.html',posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/profile/<username>/")
-# @cache.cached(300) # Сохраняет в кэш с ключом view//profile/<username>/
+@cache.cached(300) # Сохраняет в кэш с ключом view//profile/<username>/
 def profile(username):
     user = User.query.filter_by(username=username).first()
     page = request.args.get('page', 1, type=int)
@@ -144,7 +144,7 @@ def delete_post(username, post_id):
     if current_user.username != username:
         return redirect('main.index')
     Post.delete_post(post_id)
-    # cache.delete(f'view//profile/{current_user.username}/')
+    cache.delete(f'view//profile/{current_user.username}/')
     return redirect(url_for('main.profile', username=username))
 
 @bp.route('/like_increment', methods=("POST",))

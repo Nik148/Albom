@@ -1,7 +1,11 @@
+aiohttp==3.8.3
+aiosignal==1.2.0
 alembic==1.7.7
 amqp==5.1.1
 aniso8601==9.0.1
+asgiref==3.5.2
 async-timeout==4.0.2
+asyncpg==0.27.0
 attrs==22.1.0
 Babel==2.10.3
 billiard==3.6.4.0
@@ -9,6 +13,7 @@ blinker==1.5
 cachelib==0.9.0
 celery==5.2.7
 certifi==2022.6.15
+charset-normalizer==2.1.1
 click==8.1.3
 click-didyoumean==0.3.0
 click-plugins==1.1.1
@@ -33,6 +38,7 @@ Flask-RESTful==0.3.9
 flask-restx==0.5.1
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.0.1
+frozenlist==1.3.1
 greenlet==1.1.2
 idna==3.3
 importlib-metadata==4.11.3
@@ -43,6 +49,7 @@ jsonschema==4.16.0
 kombu==5.2.4
 Mako==1.2.0
 MarkupSafe==2.1.1
+multidict==6.0.2
 packaging==21.3
 pkgutil_resolve_name==1.3.10
 prompt-toolkit==3.0.30
@@ -61,4 +68,5 @@ wcwidth==0.2.5
 Werkzeug==2.1.2
 wrapt==1.14.1
 WTForms==3.0.1
+yarl==1.8.1
 zipp==3.8.0
