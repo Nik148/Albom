@@ -39,7 +39,6 @@ def index():
 
 @bp.route('/explore')
 def explore():
-    print(url_for('rest_api.User_user_api', user_id=2))
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
@@ -47,7 +46,7 @@ def explore():
     return render_template('main/main.html',posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @bp.route("/profile/<username>/")
-@cache.cached(300) # Сохраняет в кэш с ключом view//profile/<username>/
+# @cache.cached(300) # Сохраняет в кэш с ключом view//profile/<username>/
 def profile(username):
     user = User.query.filter_by(username=username).first()
     page = request.args.get('page', 1, type=int)
@@ -138,19 +137,20 @@ def search():
         prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) if page > 1 else None
         return render_template('main/main.html', posts=posts, next_url=next_url, prev_url=prev_url)
 
-@bp.route('/profile/<username>/delete/<post_id>')
+@bp.route('/delete_post', methods=('POST',))
 @login_required
-def delete_post(username, post_id):
+def delete_post():
+    username = request.json['username']
+    post_id = request.json['post_id']
     if current_user.username != username:
-        return redirect('main.index')
-    Post.delete_post(post_id)
-    cache.delete(f'view//profile/{current_user.username}/')
-    return redirect(url_for('main.profile', username=username))
+        return Response(403)
+    Post.delete_post(int(post_id))
+    # cache.delete(f'view//profile/{current_user.username}/')
+    return Response(status=200)
 
 @bp.route('/like_increment', methods=("POST",))
 @login_required
 def like_increment():
-    print(request.json)
     query = likes.insert().values(user_id=int(request.json['user_id']), post_id=int(request.json['post_id']))
     try:
         db.session.execute(query)

@@ -3,13 +3,14 @@ from app import db, login, cache
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from sqlalchemy.orm import joinedload
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 from flask import current_app, g
 import os
 from time import time
 import jwt
 from app.search import add_to_index, remove_from_index, query_index, query_prefix_index
-import pickle
+import uuid
 
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -24,6 +25,11 @@ likes = db.Table('likes',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.UniqueConstraint('post_id', 'user_id')
 )
+
+chat_followers = db.Table('chat_followers',
+    db.Column('chat_id', UUID(as_uuid=True), db.ForeignKey('chat.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')))
+
 
 class SearchableMixin(object):
     # Для Elasticsearch
@@ -223,3 +229,16 @@ class Post(SearchableMixin, db.Model):
 class AnonymousUser(AnonymousUserMixin):
     def is_following(self, user):
         return False
+    
+
+class Chat(db.Model):
+    id = db.Column(UUID(as_uuid=True), primary_key=True)
+    name = db.Column(db.String())
+
+
+class Message(db.Model):
+    id = db.Column(UUID(as_uuid=True), primary_key=True)
+    chat_id = db.Column(UUID(as_uuid=True), db.ForeignKey('chat.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    text = db.Column(db.String())
+    date = db.Column(db.DateTime, index=True, default=datetime.utcnow)
